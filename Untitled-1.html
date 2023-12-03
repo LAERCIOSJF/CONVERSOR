@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Moedas</title>
+  <style>
+   body {
+    font-family: Arial, sans-serif;
+    text-align: left;
+    margin: 60px;
+    background-color: #575757;
+  }
+  h1 {
+    color: #ffffff;
+  }
+  
+  #converter {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #fff5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 1, 0.1);
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  input,
+  select,
+  button {
+    width: 10%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  #result {
+    font-weight: bold;
+    color: #000000;
+  }
+  
+  </style>
+</head>
+<body>
+    
+  <h1>Conversor de Moedas</h1>
+
+  <div id="converter">
+    <label for="amount">Quantidade:</label>
+    <input type="number" id="amount" placeholder="Digite o valor" step="0.01">
+
+    <label for="from">De:</label>
+    <select id="from">
+      <option value="USD">Dólar Americano (USD)</option>
+      <option value="EUR">Euro (EUR)</option>
+      <option value="MZN">Metical(MZN)</option>
+      <option value="AED">Dirham(AED)</option>
+      <option value="AFN">(AED)Afghan</option>
+      <!-- Adicione outras moedas conforme necessário -->
+
+    </select>
+
+    <label for="to">Para:</label>
+    <select id="to">
+      <option value="EUR">Euro (EUR)</option>
+      <option value="USD">Dolar(USD)</option>
+      <option value="MZN">Metical(MZN)</option>
+      <option value="AED">Dirham(AED)</option>
+      <option value="AFN">(AED)Afghan</option>
+      
+      <!-- Adicione outras moedas conforme necessário -->
+
+    </select>
+
+    <button onclick="convertCurrency()">Converter</button>
+
+    <h2>Resultado:</h2>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function convertCurrency() {
+      const amount = document.getElementById('amount').value;
+      const fromCurrency = document.getElementById('from').value;
+      const toCurrency = document.getElementById('to').value;
+      const apiKey = 'b84d8f1a9f0fc25c1e196653';
+      // Adicione esta função para preencher dinamicamente as opções do seletor de moedas
+function populateCurrencyOptions() {
+  const selectFrom = document.getElementById('from');
+  const selectTo = document.getElementById('to');
+
+  // Substitua estas moedas pelo conjunto desejado
+  const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD'];
+
+  currencies.forEach(currency => {
+    const optionFrom = document.createElement('option');
+    optionFrom.value = currency;
+    optionFrom.textContent = currency;
+    selectFrom.appendChild(optionFrom);
+
+    const optionTo = document.createElement('option');
+    optionTo.value = currency;
+    optionTo.textContent = currency;
+    selectTo.appendChild(optionTo);
+  });
+}
+
+// Adicione esta função para limpar o resultado ao trocar os valores
+function clearResult() {
+  document.getElementById('result').innerHTML = '';
+}
+
+// Modifique a função existente para lidar com erros
+function convertCurrency() {
+  clearResult();
+
+  const amount = document.getElementById('amount').value;
+  const fromCurrency = document.getElementById('from').value;
+  const toCurrency = document.getElementById('to').value;
+
+  if (!amount || isNaN(amount)) {
+    alert('Por favor, insira um valor numérico válido.');
+    return;
+  }
+
+  fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}?apikey=sua_chave_da_api_aqui`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Não foi possível obter as taxas de câmbio. Por favor, tente novamente mais tarde.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const exchangeRate = data.rates[toCurrency];
+      if (!exchangeRate) {
+        throw new Error('Não foi possível encontrar a taxa de câmbio desejada.');
+      }
+
+      const result = (amount * exchangeRate).toFixed(2);
+      document.getElementById('result').innerHTML = `${amount} ${fromCurrency} = ${result} ${toCurrency}`;
+    })
+    .catch(error => alert(error.message));
+}
+
+// Chame a função para preencher as opções do seletor de moedas quando a página carregar
+window.onload = populateCurrencyOptions;
+
+
+
+      fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
+
+        .then(response => response.json())
+        .then(data => {
+          const exchangeRate = data.rates[toCurrency];
+          const result = (amount * exchangeRate).toFixed(2);
+
+          document.getElementById('result').innerHTML = `${amount} ${fromCurrency} = ${result} ${toCurrency}`;
+        })
+        .catch(error => console.error('Error fetching exchange rates:', error));
+        
+    }
+  </script>
+</body>
+</html>
